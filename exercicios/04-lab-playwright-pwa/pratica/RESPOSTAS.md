@@ -39,4 +39,4 @@ Rodei esses comandos npx playwright test tests/desafios/06-flaky-cacada.spec.ts 
 
 ### 6. Missão livre: por que você escolheu **esse** fluxo? Que risco do produto ele cobre? O que ficou **sem** teste e por quê?
 
-<Escolhi o fluxo de autenticação + proteção de rotas + logout porque é crítico para a segurança e a experiência do usuário: ninguém deve ver áreas protegidas sem sessão, e ao sair a navegação precisa voltar para o estado correto. Esse risco cobre login, sessão persistente, redirecionamento e estado de autenticação em rota protegida, que são pontos muito sensíveis em qualquer app.>
+<Foi escolhido o fluxo de autenticação + proteção de rotas + logout porque é crítico para a segurança e a experiência do usuário: ninguém deve ver áreas protegidas sem sessão, e ao sair a navegação precisa voltar para o estado correto. Esse risco cobre login, sessão persistente, redirecionamento e estado de autenticação em rota protegida, que são pontos muito sensíveis em qualquer app.>
