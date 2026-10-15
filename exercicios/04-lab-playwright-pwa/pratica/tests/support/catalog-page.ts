@@ -23,20 +23,12 @@ export class CatalogPage {
 
   //Clica no botão "Favoritar …" DENTRO do card do título.
   async favorite(title: string) {
-    return this.favorito(title);
-  }
-
-  async favorito(title: string) {
     const card = this.card(title);
     await card.getByRole('button', { name: /Favoritar/i }).click();
   }
 
   //Clica em "Favoritos" e espera a tela favorites-screen.
   async openFavorites() {
-    return this.abrirFavoritos();
-  }
-
-  async abrirFavoritos() {
     await this.page.getByTestId('movielist-favorites-button').click();
     await expect(this.page.getByTestId('favorites-screen')).toBeVisible();
   }

@@ -74,7 +74,7 @@ base('D2. Page Object: o teste lê como uma frase', async ({ page }) => {
 
   await catalog.goto();
   await catalog.favorite('Pulp Fiction');
-  await catalog.abrirFavoritos();
+  await catalog.openFavorites();
 
   await expect(catalog.favoritesCount).toHaveText('1 filme favorito');
 });
@@ -90,7 +90,7 @@ base('D2. Page Object: o teste lê como uma frase', async ({ page }) => {
 test('D3. fixtures: semeia favoritos sem clicar e confere na tela', async ({ catalog, seedFavorites, page }) => {
   await seedFavorites([603, 680]);
   await catalog.goto();
-  await catalog.abrirFavoritos();
+  await catalog.openFavorites();
 
   await expectFx(catalog.favoritesCount).toHaveText('2 filmes favoritos');
   await expect(page.getByTestId('favorites-item-603')).toBeVisible();
