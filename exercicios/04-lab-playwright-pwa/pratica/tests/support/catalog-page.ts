@@ -32,6 +32,10 @@ export class CatalogPage {
   }
 
   //Clica em "Favoritos" e espera a tela favorites-screen.
+  async openFavorites() {
+    return this.abrirFavoritos();
+  }
+
   async abrirFavoritos() {
     await this.page.getByTestId('movielist-favorites-button').click();
     await expect(this.page.getByTestId('favorites-screen')).toBeVisible();
