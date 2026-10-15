@@ -18,7 +18,6 @@
 
 import { test as base, expect } from '@playwright/test';
 import { CatalogPage } from './catalog-page';
-import { falta } from './todo';
 
 type Fixtures = {
   catalog: CatalogPage;
@@ -26,18 +25,16 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  // ✍️ entregue um  new CatalogPage(page)  via  await use(...)
   catalog: async ({ page }, use) => {
-    void page;
-    void use;
-    falta('D3 — fixture catalog');
+    await use(new CatalogPage(page));
   },
 
-  // ✍️ entregue uma função (ids) => … que faz o addInitScript descrito acima
   seedFavorites: async ({ context }, use) => {
-    void context;
-    void use;
-    falta('D3 — fixture seedFavorites');
+    await use(async (ids: number[]) => {
+      await context.addInitScript(([key, value]) => {
+        localStorage.setItem(key, value);
+      }, ['cinefav-favorites', JSON.stringify(ids)]);
+    });
   },
 });
 

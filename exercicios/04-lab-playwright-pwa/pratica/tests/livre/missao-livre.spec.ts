@@ -33,15 +33,41 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { test, expect } from '@playwright/test';
-import { falta } from '../support/todo';
 
-test.describe('Missão livre — <nome do seu fluxo>', () => {
-  test('feliz: <descreva>', async ({ page }) => {
+test.describe('Missão livre — proteção de rotas e logout', () => {
+  test('feliz: logout leva de volta para o login com passo a passo claro', async ({ page }) => {
     await page.goto('/qa');
-    void expect;
-    falta('Missão livre — teste feliz');
+
+    await test.step('abre catálogo autenticado', async () => {
+      await expect(page.getByTestId('movielist-grid')).toBeVisible();
+    });
+
+    await test.step('faz logout', async () => {
+      await page.getByTestId('logout-button').click();
+    });
+
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole('button', { name: 'Entrar' })).toBeVisible();
   });
 
-  // test('negativo: <descreva>', async ({ page }) => { ... });
-  // test('borda: <descreva>', async ({ page }) => { ... });
+  test.describe('sem sessão', () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    test('negativo: /favorites e /qa redirecionam para /login', async ({ page }) => {
+      await page.goto('/favorites');
+      await expect(page).toHaveURL(/\/login$/);
+
+      await page.goto('/qa');
+      await expect(page).toHaveURL(/\/login$/);
+    });
+  });
+
+  test('borda: após logout, o botão de sair some e o formulário de login aparece', async ({ page }) => {
+    await page.goto('/qa');
+    await page.getByTestId('logout-button').click();
+
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByTestId('logout-button')).not.toBeVisible();
+    await expect(page.getByTestId('login-submit-button')).toBeVisible();
+  });
 });

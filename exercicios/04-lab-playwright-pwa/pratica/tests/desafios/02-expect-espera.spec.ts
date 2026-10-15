@@ -14,7 +14,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { test, expect } from '@playwright/test';
-import { falta } from '../support/todo';
 
 test.describe('Bloco B — expect e espera', () => {
   // ── B1 🟢 · ≈ 4 min ────────────────────────────────────────────────────────
@@ -30,9 +29,12 @@ test.describe('Bloco B — expect e espera', () => {
 
     await expect(cards).toHaveCount(12);
 
-    // ✍️ sua vez: 24, depois 36, depois o botão some
-    void loadMore;
-    falta('B1 — complete a paginação');
+    await loadMore.click();
+    await expect(cards).toHaveCount(24);
+
+    await loadMore.click();
+    await expect(cards).toHaveCount(36);
+    await expect(loadMore).toBeHidden();
   });
 
   // ── B2 🟡 · ≈ 7 min ────────────────────────────────────────────────────────
@@ -48,7 +50,22 @@ test.describe('Bloco B — expect e espera', () => {
   test('B2. busca com debounce: digita devagar, limpa, e o vazio', async ({ page }) => {
     await page.goto('/search');
 
-    falta('B2 — escreva os 4 passos');
+    const input = page.getByTestId('search-input');
+    const results = page.locator('[data-testid^="search-result-"]');
+    const clear = page.getByTestId('search-clear-button');
+    const empty = page.getByTestId('search-empty');
+
+    await input.pressSequentially('matrix', { delay: 80 });
+    await expect(results).toHaveCount(1);
+    await expect(results.first()).toContainText('Matrix');
+
+    await clear.click();
+    await expect(input).toHaveValue('');
+    await expect(results).toHaveCount(0);
+
+    await input.pressSequentially('xyzw', { delay: 80 });
+    await expect(empty).toContainText('xyzw');
+    await expect(results).toHaveCount(0);
   });
 
   // ── B3 🔴 · ≈ 12 min ───────────────────────────────────────────────────────
@@ -69,6 +86,19 @@ test.describe('Bloco B — expect e espera', () => {
   test('B3. favoritos persistem: expect.poll no localStorage + soft após reload', async ({ page }) => {
     await page.goto('/qa');
 
-    falta('B3 — escreva o teste inteiro');
+    const ids = [603, 680, 550];
+    for (const id of ids) {
+      await page.getByTestId(`movie-card-heart-${id}`).click();
+    }
+
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('cinefav-favorites') ?? '[]'))).toEqual([603, 680, 550]);
+
+    await page.reload();
+
+    for (const id of ids) {
+      await expect.soft(page.getByTestId(`movie-card-heart-${id}`)).toHaveAttribute('aria-pressed', 'true');
+    }
+
+    await expect.soft(page.getByTestId('movie-card-heart-13')).toHaveAttribute('aria-pressed', 'false');
   });
 });
